@@ -1,0 +1,37 @@
+---
+- name: Install Domain Controller and Supporting Functions
+  hosts:
+    - t1dc 
+  #- g1dc
+  #- g2dc
+  #- g3dc
+  #- g4dc
+  #- g5dc
+  gather_facts: yes
+
+  tasks:
+    - name: Install the Domain Controller
+      win_feature:
+        name: AD-Domain-Services
+        include_management_tools: yes
+        include_sub_features: yes
+        state: present
+      register: result
+
+    - name: "Configure the Domain"
+      win_domain:
+        dns_domain_name: "{{ domainName }}"
+        domain_netbios_name: "{{ netbiosName }}"
+        safe_mode_password: "{{ ansiblePassword }}"
+      register: ad
+
+    - name: Ensure WinRM starts when the system has settled and is ready to work reliably
+      win_service:
+        name: WinRM
+        start_mode: delayed
+
+    - name: Reboot server and wait for intial setup
+      win_reboot:
+        post_reboot_delay: 120
+      when: ad.changed
+

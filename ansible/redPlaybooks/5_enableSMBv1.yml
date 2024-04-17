@@ -1,0 +1,28 @@
+---
+- name: Setup SMBv1
+  hosts:
+    - teacher1
+    #- group1
+    #- group2
+    #- group3
+    #- group4
+    #- group5
+  gather_facts: yes
+
+  tasks:
+    - name: Run Powershell to enable SMBv1
+      ansible.windows.win_powershell:
+        script: |
+            Enable-WindowsOptionalFeature -Online -FeatureName smb1protocol
+
+    - name: Enable SMBV1 feature
+      win_feature:
+        name: SMB1Protocol
+        state: present
+        include_sub_features: yes
+        include_management_tools: yes
+      register: win_feature
+
+    - name: Reboot if feature requires it
+      ansible.windows.win_reboot:
+      when: win_feature.reboot_required 

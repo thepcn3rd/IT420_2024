@@ -1,0 +1,4 @@
+# Run the following command to create the structure of a role
+ansible-galaxy init <name of role>
+
+The elk install came from GOAD

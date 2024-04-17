@@ -1,0 +1,19 @@
+---
+- name: Enable Remote Desktop for Multiple Sessions at the same time
+  hosts:
+    - teacher1
+    #- group1
+    #- group2
+    #- group3
+    #- group4
+    #- group5
+  gather_facts: yes
+
+  tasks:
+    - name: Enable Multiple Sessions
+      win_regedit:
+        path: HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server
+        name: fSingleSessionPerUser
+        data: 0
+        type: dword
+

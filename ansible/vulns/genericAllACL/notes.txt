@@ -1,0 +1,13 @@
+# Place in the scripts folder
+
+For whatever reason the access rights on the domain admins group keeps changing back to the defaults...  Create a scheduled task to replace the permissions...
+
+# Authenticate with evil-winrm with the domain admin accounts
+evil-winrm -i 10.27.20.140 -u thepcn3rd -p Seven1sabignumber! -s scripts
+
+
+forceChangePassword.ps1
+setGenericAll.ps1
+setPasswordMarisol.ps1
+setPasswordUser.ps1
+clearEventlog.ps1

@@ -1,0 +1,21 @@
+---
+- name: Configure Hostname for Windows Servers 
+  hosts:
+    - teacher1 
+    #- group1
+    #- group2
+    #- group3
+    #- group4
+    #- group5
+  gather_facts: yes
+
+  tasks:
+    - name: "Changing the hostnames of the servers"
+      win_hostname:
+        name: "{{ hostname }}"
+      register: result
+
+    - name: "Reboot"
+      win_reboot:
+      when: result.reboot_required
+

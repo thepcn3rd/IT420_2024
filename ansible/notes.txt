@@ -1,0 +1,21 @@
+Setup of Ansible
+-----------------
+ansible-galaxy collection install community.windows
+
+AWK Command to Create Users from Fake Data
+-------------------------------------------
+cat output.txt | awk -F "," '{print "- { name: \"" $1 "." $2 "\", password: \"" $3 "\" }" }'
+
+
+Setup of Windows Servers
+------------------------
+Set IP of DC - Set DNS Server to itself and google
+Set IP of Srv - Set DNS Server to the DC and then google
+
+# Create a directory on a USB attached drive
+# In proxmox create a vm for Ubuntu in the driectory with an IDE harddrive with vmdk format
+# Copy the Metasploitable vmdk and overwrite the file created on the directory in the USB attached drive
+# Boot and pwn...
+
+# SSH into metasploitable
+ssh -o HostkeyAlgorithms=ssh-rsa msfadmin@10.27.20.118

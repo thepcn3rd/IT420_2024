@@ -1,0 +1,27 @@
+---
+# Prerequisits 
+# 1. Install sshpass - apt install sshpass
+# 2. Setup correct permissions on pem key - chmod 400 ls.pem
+
+## Command that you execute to run the playbooks uncommented
+# ansible-playbook -i inventory.yml configure.yml 
+#
+## Uncomment the playbook below that you want to execute
+#- import_playbook: playbooks/configOpenVPN.yml
+
+- import_playbook: playbooks/a_setHostnames.yml
+- import_playbook: playbooks/b_setupDomainControllers.yml
+- import_playbook: playbooks/c_disableControls.yml
+- import_playbook: playbooks/d_buildADStructure.yml
+- import_playbook: playbooks/e_joinToDomain.yml
+- import_playbook: playbooks/f_createGroupADAccounts.yml
+- import_playbook: playbooks/g_allowGroupAccountsRDP.yml
+- import_playbook: playbooks/h_disableNLAforRDP.yml
+#- import_playbook: playbooks/i_elkServer.yml
+- import_playbook: playbooks/j_installWinlogbeat.yml
+- import_playbook: playbooks/k_enableMultipleRDPSessions.yml
+- import_playbook: playbooks/l_installFirefox.yml
+
+
+# Post Configuration of the Workstation
+# Used to copy files over to the windows workstation, etc.

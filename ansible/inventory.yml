@@ -1,0 +1,111 @@
+all:
+  children:
+    windows_servers:
+      children:
+        group1:
+          hosts:
+            g1dc:
+              ansible_host: "{{ dc }}"
+              hostname: "{{ teamName }}-dc"
+            g1srv:
+              ansible_host: "{{ srv }}"
+              hostname: "{{ teamName }}-srv"
+          vars:
+            teamName: "zoocrew"
+            teamNumber: "1"
+            dc: "10.27.20.1{{ teamNumber }}0"
+            srv: "10.27.20.1{{ teamNumber }}2"
+        group2:
+          hosts:
+            g2dc:
+              ansible_host: "{{ dc }}"
+              hostname: "{{ teamName }}-dc"
+            g2srv:
+              ansible_host: "{{ srv }}"
+              hostname: "{{ teamName }}-srv"
+          vars:
+            teamName: "defenders"
+            teamNumber: "2"
+            dc: "10.27.20.1{{ teamNumber }}0"
+            srv: "10.27.20.1{{ teamNumber }}2"
+        group3:
+          hosts:
+            g3dc:
+              ansible_host: "{{ dc }}"
+              hostname: "{{ teamName }}-dc"
+            g3srv:
+              ansible_host: "{{ srv }}"
+              hostname: "{{ teamName }}-srv"
+          vars:
+            teamName: "teentitans"
+            teamNumber: "3"
+            dc: "10.27.20.1{{ teamNumber }}0"
+            srv: "10.27.20.1{{ teamNumber }}2"
+        group4:
+          hosts:
+            g4dc:
+              ansible_host: "{{ dc }}"
+              hostname: "{{ teamName }}-dc"
+            g4srv:
+              ansible_host: "{{ srv }}"
+              hostname: "{{ teamName }}-srv"
+          vars:
+            teamName: "fantastic4"
+            teamNumber: "4"
+            dc: "10.27.20.1{{ teamNumber }}0"
+            srv: "10.27.20.1{{ teamNumber }}2"
+        group5:
+          hosts:
+            g5dc:
+              ansible_host: "{{ dc }}"
+              hostname: "{{ teamName }}-dc"
+            g5srv:
+              ansible_host: "{{ srv }}"
+              hostname: "{{ teamName }}-srv"
+          vars:
+            teamName: "xmen"
+            teamNumber: "5"
+            dc: "10.27.20.1{{ teamNumber }}0"
+            srv: "10.27.20.1{{ teamNumber }}2"
+        teacher1:
+          hosts:
+            t1dc:
+              ansible_host: "{{ dc }}"
+              hostname: "{{ teamName }}-dc"
+            t1srv:
+              ansible_host: "{{ srv }}"
+              hostname: "{{ teamName }}-srv"
+          vars:
+            teamName: "avengers"
+            teamNumber: "6"
+            dc: "10.27.20.1{{ teamNumber }}0"
+            srv: "10.27.20.1{{ teamNumber }}2"
+      vars:
+        ansible_port: "5986"
+        ansible_user: "{{ ansibleUser }}"
+        ansible_password: "{{ ansiblePassword }}"
+        ansible_connection: "winrm"
+        ansible_winrm_server_cert_validation: "ignore"
+        ansible_winrm_scheme: "https"
+        ansibleUser: "administrator"
+        ansiblePassword: "Thisisapassword!0thatislongerthanitneedstobe"
+        domainName: "{{ teamName }}.local"
+        ldapDomain: "DC={{ teamName }},DC=local"
+        netbiosName: "{{ teamName }}"
+    linux_servers:
+      hosts:
+        ubG1:
+      vars:
+    elk_servers:
+      hosts:
+        elk_server:
+          ansible_host: "10.27.20.180"
+          ansible_port: "22" # 
+          ansible_connection: "ssh"
+          ansible_user: "thepcn3rd"
+          ansible_ssh_pass: "Thisisapassword!0thatislongerthanitneedstobe"
+          ansible_become_pass: "Thisisapassword!0thanitneedstobe"
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    ansibleDirectory: "/home/thepcn3rd/it420Final/ansible"
+

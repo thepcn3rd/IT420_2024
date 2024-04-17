@@ -1,0 +1,36 @@
+- name: Install Winlogbeat
+  hosts: 
+    - teacher1
+    #- group1
+    #- group2
+    #- group3
+    #- group4
+    #- group5
+  gather_facts: yes
+
+  tasks:
+    - name: Create directory c:\elastic
+      win_file:
+        path: c:\elastic
+        state: directory
+
+    - name: Copy Winlogbeat File over to Server
+      ansible.windows.win_copy:
+        src: "{{ ansibleDirectory }}/files/winlogbeat-8.12.2-windows-x86_64.msi"
+        dest: 'c:\elastic\winlogbeat-8.12.2-windows-x86_64.msi'
+
+    - name: Install Winlogbeat
+      win_package:
+        path: 'c:\elastic\winlogbeat-8.12.2-windows-x86_64.msi'
+        state: present
+
+    - name: Copy Winlogbeat File over to Server
+      ansible.windows.win_copy:
+        src: "{{ ansibleDirectory }}/files/winlogbeat.yml"
+        dest: 'c:\program files\elastic\beats\8.12.2\winlogbeat\winlogbeat.yml'
+
+    - name: Start the Winlogbeat Service
+      win_service:
+        name: "Elastic Winlogbeat 8.12.2"
+        start_mode: auto
+        state: restarted

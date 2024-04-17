@@ -1,0 +1,37 @@
+---
+- name: Configure Domain Controllers
+  hosts:
+    - t1dc
+    #- g1dc
+    #- g2dc
+    #- g3dc
+    #- g4dc
+    #- g5dc
+  gather_facts: yes
+
+  tasks:
+    - name: Create Folder for Files
+      win_file:
+        path: c:\files
+        state: directory
+
+    - name: Copy 7-zip install to c:\shares\files
+      ansible.windows.win_copy:
+        src: "{{ ansibleDirectory }}/files/7zipFiles/7z.msi"
+        dest: c:\files
+
+    - name: Install 7zip and use a file version for the installation check
+      win_package:
+        path: 'c:\files\7z.msi'
+        state: present
+
+    - name: Copy Firefox to c:\shares\files
+      ansible.windows.win_copy:
+        src: "{{ ansibleDirectory }}/files/firefox103.msi"
+        dest: 'c:\files\firefox103.msi'
+
+    - name: Install Firefox 
+      win_package:
+        path: 'c:\files\firefox103.msi'
+        state: present
+

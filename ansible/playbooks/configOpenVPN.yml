@@ -1,0 +1,47 @@
+---
+- name: Configure openVPN for IT420
+  hosts: openvpn
+  become: yes
+  gather_facts: yes
+
+  tasks:
+    - set_fact:
+        hostname: ovpn
+
+    - name: "Change the hostname to {{ hostname }}"
+      hostname:
+        name: "{{ hostname }}"
+
+    # Sometimes does not work...
+    - name: "apt Update packages"
+      apt:
+        update_cache: yes
+
+
+    - name: "Install Dependencies for openvpn"
+      apt:
+        pkg:
+          - curl
+          - unzip
+          - apt-transport-https
+          - ca-certificates
+          - software-properties-common
+          - openvpn
+    
+    - name: Copy OpenVPN configuration file to server
+      ansible.builtin.copy:
+        src: "{{ ansibleDirectory }}/files/openVPN/openvpn-install.sh"
+        dest: /home/ubuntu/openvpn-install.sh
+        mode: '0700'
+
+    - name: Copy Tailscale configuration file to server
+      ansible.builtin.copy:
+        src: "{{ ansibleDirectory }}/files/openVPN/tailscale-install.sh"
+        dest: /home/ubuntu/tailscale-install.sh
+        mode: '0700'
+
+# Places the openvpn file on the server for installation
+# 1. Run the script ./openvpn-install.sh
+# 2. Configure appropriately for TCP/UDP
+# 3. With Lightsail open port 1194/TCP for the connection to be successful
+#

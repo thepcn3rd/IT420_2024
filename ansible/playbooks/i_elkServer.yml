@@ -1,0 +1,7 @@
+- name: Install ELK
+  hosts: elk_server
+  become: yes
+  roles:
+    - { role: 'elk' }
+
+# Setup https://www.elastic.co/guide/en/elasticsearch/reference/7.17/security-minimal-setup.html#security-create-builtin-users

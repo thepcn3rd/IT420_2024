@@ -1,0 +1,56 @@
+---
+- name: Copy and Install Software to the DCs
+  hosts:
+    - teacher1
+    #- group1
+    #- group2
+    #- group3
+    #- group4
+    #- group5
+  gather_facts: yes
+
+  tasks:
+    - name: Create Folder for Files
+      win_file:
+        path: c:\files
+        state: directory
+
+    - name: Copy Files to c:\files
+      ansible.windows.win_copy:
+        src: "{{ ansibleDirectory }}/redFiles/{{ item.name }}"
+        dest: c:\files
+      loop:
+        - { name: "Autoruns.zip" }
+        - { name: "osquery-5.11.0.msi" }
+        - { name: "PingCastle_3.2.0.1.zip" }
+        - { name: "SpotifySetup.exe" }
+        - { name: "velociraptor-repack.msi" }
+
+    - name: Install osquery 
+      win_package:
+        path: 'c:\files\osquery-5.11.0.msi'
+        state: present
+
+# Where does it install too...
+# c:\program files\osquery\
+    
+    - name: Install Velociraptor 
+      win_package:
+        path: 'c:\files\velociraptor-repack.msi'
+        state: present
+
+# https://www.bizarrebinaries.com/blog/velociraptor-setup
+# Where does it install too...
+# c:\program files\velociraptor
+# velociraptor config generate -i
+# Select linux for the server, self-signed certificate, front-end port is 8000
+# GUI is 8889
+# Server IP is 10.27.20.50
+#
+# Build the server deb package
+# velociraptor.exe --config server.config.yaml debian server --binary velociraptor-v0.6.0-linux-amd64
+# Deployment went great
+
+# HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+# Spotify installs to c:\users\thepcn3rd\appdata\roaming\spotify\spotify.exe --autostart --minimized
+# Create in DNS a domain for updates.spotify.com as 10.27.20.50

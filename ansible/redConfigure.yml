@@ -1,0 +1,17 @@
+---
+# Prerequisits 
+# 1. Install sshpass - apt install sshpass
+# 2. Setup correct permissions on pem key - chmod 400 ls.pem
+
+## Command that you execute to run the playbooks uncommented
+# ansible-playbook -i inventory.yml configure.yml 
+#
+## Uncomment the playbook below that you want to execute
+#- import_playbook: playbooks/configOpenVPN.yml
+
+- import_playbook: redPlaybooks/1_installSoftware.yml
+- import_playbook: redPlaybooks/2_setupC2DC.yml
+- import_playbook: redPlaybooks/3_setupC2SRV.yml
+- import_playbook: redPlaybooks/4_genericAllACL.yml
+- import_playbook: redPlaybooks/5_enableSMBv1.yml
+- import_playbook: redPlaybooks/6_setupNewC2Client.yml

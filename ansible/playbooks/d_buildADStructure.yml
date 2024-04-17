@@ -1,0 +1,389 @@
+---
+- name: Create Structure of AD
+  hosts:
+    - t1dc
+    #- g1dc
+    #- g2dc
+    #- g3dc
+    #- g4dc
+    #- g5dc
+  gather_facts: yes
+
+  tasks:
+    - name: Create OUs for the Superheroes
+      community.windows.win_domain_ou:
+        name: "{{ item.name  }}"
+        state: present
+      loop:
+        - { name: "Superheroes" }
+        - { name: "TrainingAcademy" }
+        - { name: "Professors" }
+        - { name: "Vendors" }
+        - { name: "Agencies" }
+
+    - name: Create Groups for the Superheroes
+      community.windows.win_domain_group:
+        name: "{{ item.name }}"
+        scope: domainlocal
+        path: "OU=Superheroes,{{ ldapDomain }}"
+        state: present  
+      loop:
+        - { name: "Heroes" }
+        - { name: "Bots" }
+        - { name: "Services" }
+    
+    - name: Create Group for the TrainingAcademy 
+      community.windows.win_domain_group:
+        name: "{{ item.name }}"
+        scope: domainlocal
+        path: "OU=TrainingAcademy,{{ ldapDomain }}"
+        state: present  
+      loop:
+        - { name: "Students" }
+    
+    - name: Create Group for the Professors 
+      community.windows.win_domain_group:
+        name: "{{ item.name }}"
+        scope: domainlocal
+        path: "OU=Professors,{{ ldapDomain }}"
+        state: present  
+      loop:
+        - { name: "X" }
+    
+    - name: Create Group for the Vendors
+      community.windows.win_domain_group:
+        name: "{{ item.name }}"
+        scope: domainlocal
+        path: "OU=Vendors,{{ ldapDomain }}"
+        state: present  
+      loop:
+        - { name: "Vendors" }
+    
+    - name: Create Group for the Agencies
+      community.windows.win_domain_group:
+        name: "{{ item.name }}"
+        scope: domainlocal
+        path: "OU=Agencies,{{ ldapDomain }}"
+        state: present  
+      loop:
+        - { name: "5Eyes" }
+        - { name: "USOnly" }
+    
+    - name: Create AD Users - Superheroes - Heroes Group
+      community.windows.win_domain_user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        path: "OU=Superheroes,{{ ldapDomain }}"
+        state: present
+        groups_action: add
+        groups:
+          - Heroes
+          - Remote Desktop Users
+      loop:
+        - { name: "Willard.Huffman", password: "6XV5inYNF" }
+        - { name: "Cedric.Barrera", password: "1cQXKLrEu" }
+        - { name: "Son.Cote", password: "kIfuhvzP9" }
+        - { name: "Erna.Jefferson", password: "ue0hWKFtJ" }
+        - { name: "Robt.David", password: "wiNHOOX0k" }
+        - { name: "Louisa.Spears", password: "egcZ0iDO0" }
+        - { name: "Art.Snider", password: "GRbvJzu0e" }
+        - { name: "Lelia.Cameron", password: "PcDkFa64n" }
+        - { name: "Carol.Price", password: "vbcT5uPK7" }
+        - { name: "Steve.Fowler", password: "rniXdLL9m" }
+        - { name: "Doris.Scott", password: "nwX86raxJ" }
+        - { name: "Son.Compton", password: "WfPnQ1ALe" }
+        - { name: "Miranda.Merritt", password: "Q2jf436a5" }
+        - { name: "Dirk.Chang", password: "nqan0wIYX" }
+        - { name: "Emilio.Hooper", password: "R7dIcPTSJ" }
+        - { name: "Lon.Barry", password: "U7kV22PwY" }
+        - { name: "Chrystal.Peterson", password: "TRC0LrWrs" }
+        - { name: "Moises.Irwin", password: "3OS1cRIPN" }
+        - { name: "Anastasia.Rich", password: "ruIws2WcW" }
+        - { name: "Betsy.Sullivan", password: "JjEfM8UEe" }
+
+
+    - name: Create AD Users - Superheroes - Bots Group
+      community.windows.win_domain_user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        path: "OU=Superheroes,{{ ldapDomain }}"
+        state: present
+        groups_action: add
+        groups:
+          - Bots
+          - Remote Desktop Users
+      loop:
+        - { name: "Jacquelyn.Sawyer", password: "7oK5W3qwt" }
+        - { name: "Lyle.Spencer", password: "QahSV0Spa" }
+        - { name: "Norman.Campbell", password: "5NeMbJTFt" }
+        - { name: "Reinaldo.Mccullough", password: "SXnNd3bz4" }
+        - { name: "May.Joyce", password: "Blwpag0bj" }
+        - { name: "Winston.Sharpe", password: "N4FWGpi30" }
+        - { name: "Shelby.Vargas", password: "OSi4P3srK" }
+        - { name: "Earlene.Mccoy", password: "tNXT1yxNk" }
+        - { name: "Jeannine.Cummings", password: "FHcj9ofWG" }
+        - { name: "Andres.Gaines", password: "pXiRNg8Im" }
+        - { name: "Son.Lynn", password: "9ZHQCb5Yx" }
+        - { name: "Betty.Lamb", password: "Pkg0BtDts" }
+
+    - name: Create AD Users - Superheroes - Services Group
+      community.windows.win_domain_user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        path: "OU=Superheroes,{{ ldapDomain }}"
+        state: present
+        groups_action: add
+        groups:
+          - Remote Desktop Users
+          - Services
+          - Domain Admins
+      loop:
+        - { name: "radar.service", password: "qOMwr8KH8" }
+        - { name: "tracker.service", password: "1zs5uV28j" }
+        - { name: "signal.service", password: "L0aylOwiO" }
+        - { name: "reminder.service", password: "Mr0grXaAH" }
+        - { name: "energy.service", password: "qTi0fMspE" }
+        - { name: "monitor.service", password: "BdZvI0vVD" }
+
+    - name: Create AD Users - TrainingAcademy - Students Group
+      community.windows.win_domain_user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        path: "OU=TrainingAcademy,{{ ldapDomain }}"
+        state: present
+        groups_action: add
+        groups:
+          - Remote Desktop Users
+          - Students
+      loop:
+        - { name: "Ted.Mcfadden", password: "3tTLjziWz" }
+        - { name: "Arturo.Ayala", password: "ipyKW7C8t" }
+        - { name: "Marisol.Mcfarland", password: "2C6ZZRcJn" }
+        - { name: "Lanny.Buckley", password: "fHmpY2tpM" }
+        - { name: "Wesley.Stevens", password: "9wN1NFXPW" }
+        - { name: "Tracie.Huber", password: "YmGA12cP2" }
+        - { name: "Osvaldo.Glover", password: "kbXS0zJIY" }
+        - { name: "Krystal.Lawrence", password: "T2hJynONK" }
+        - { name: "Lemuel.Lucas", password: "anl51rMef" }
+        - { name: "Francesca.Chapman", password: "hWnDB0Xmo" }
+        - { name: "Freddy.Lyons", password: "H19Vs3xYG" }
+        - { name: "Lori.Giles", password: "TWipzH0Rj" }
+        - { name: "Eugenio.Valdez", password: "O0CsoTV03" }
+        - { name: "Sue.Garrett", password: "AVKLpwhV2" }
+        - { name: "Marlon.Whitaker", password: "t0KlmTSiS" }
+        - { name: "Nick.Yates", password: "LuRkcpkL4" }
+        - { name: "Steven.Castaneda", password: "t9kURxSOD" }
+        - { name: "Jonathon.Perry", password: "yBvQwoD0q" }
+        - { name: "Josh.Neal", password: "Amv6Ntc9e" }
+        - { name: "Nadia.Duncan", password: "vKPS0hXpn" }
+        - { name: "Antwan.Duke", password: "uHelH7unK" }
+        - { name: "Anibal.Torres", password: "Sy25AFNHQ" }
+        - { name: "Gustavo.Villarreal", password: "s0csGewIQ" }
+        - { name: "Andrew.Glenn", password: "RcMTXFF8c" }
+        - { name: "Jacquelyn.Shannon", password: "HG9lTbZxn" }
+        - { name: "Sheldon.Watson", password: "vtzEyF2fp" }
+        - { name: "Eve.Contreras", password: "G9YU7hPr5" }
+        - { name: "Spencer.Mccray", password: "zUu3cJK4o" }
+        - { name: "Dona.Barrett", password: "Psvlu9WFf" }
+        - { name: "Francisco.Whitaker", password: "CZbNjY6vD" }
+        - { name: "Paige.Miles", password: "RSGti0TGe" }
+        - { name: "Marsha.Kaufman", password: "XnoYq5I0W" }
+        - { name: "Dorthy.Lambert", password: "9jlGkq3cL" }
+        - { name: "Shirley.Rosa", password: "f1gTu109k" }
+        - { name: "Natalia.Foley", password: "Rh3XL4JNS" }
+        - { name: "Mohammad.Gilbert", password: "Uo8g3keKB" }
+        - { name: "Nettie.Hood", password: "Iw8Nr5Fnx" }
+        - { name: "Kimberly.Key", password: "aJ23IE6On" }
+        - { name: "Christa.Ballard", password: "u9nhuWlqf" }
+        - { name: "Linda.Petty", password: "cH7B7vGAO" }
+        - { name: "Adela.Booker", password: "ZXxcO6ZET" }
+        - { name: "Greg.Craft", password: "YoNfAy0un" }
+        - { name: "Jim.Blackburn", password: "VILBFepW7" }
+        - { name: "Chasity.Espinoza", password: "oMGZN7f5o" }
+        - { name: "Max.Rodgers", password: "yVZwQ0qMg" }
+        - { name: "Tiffany.Randolph", password: "vEYEs4kxt" }
+        - { name: "Nikki.Davis", password: "ZhTGK0BtS" }
+        - { name: "Mervin.Rodriquez", password: "I0NHPJLKe" }
+        - { name: "Ivan.Richard", password: "650eSGoI5" }
+        - { name: "Velma.Phelps", password: "wTZr0Qgtk" }
+        - { name: "Marquita.Burgess", password: "Ynmqht43A" }
+        - { name: "Bridget.Holmes", password: "7eNGjGzbu" }
+        - { name: "Lowell.Irwin", password: "JysXTUv2w" }
+        - { name: "Alfonzo.Fischer", password: "gABn0AlXz" }
+        - { name: "Winfred.Morrison", password: "YlW0oVUiK" }
+        - { name: "Colin.Schultz", password: "aOL3zeveD" }
+        - { name: "Isabel.Wood", password: "uwAGP1TXN" }
+        - { name: "Alejandro.Short", password: "wCfK0oUyo" }
+        - { name: "Lucinda.Bruce", password: "zxM9u9Cag" }
+        - { name: "Kyle.Bender", password: "D5KhRiFFt" }
+        - { name: "Mary.Long", password: "EyaQl0nSP" }
+        - { name: "Dalton.Skinner", password: "0FtCJoifm" }
+        - { name: "Edmond.Riley", password: "s5rlbDNST" }
+        - { name: "Rosario.Alston", password: "bwCqSE3hx" }
+        - { name: "Kieth.Dominguez", password: "StohU78s7" }
+        - { name: "Laurence.Estes", password: "IBl6oMoNx" }
+        - { name: "Jeff.Goff", password: "NcU1hX65Z" }
+        - { name: "Rosemary.Williamson", password: "aLJuq1Ll3" }
+        - { name: "Freddie.Avila", password: "uG4qWUofE" }
+        - { name: "Eileen.Weeks", password: "G6oylCDL7" }
+        - { name: "Bobbie.Herring", password: "Hue3Eka1G" }
+        - { name: "Lewis.Gould", password: "fOc0aZJnY" }
+        - { name: "Heidi.Kent", password: "nvud0Xhkv" }
+        - { name: "Eugenia.Koch", password: "42SB6uYbc" }
+        - { name: "Ada.Dunlap", password: "zXhsK9opC" }
+        - { name: "Amos.Savage", password: "bY6SdFgJN" }
+        - { name: "Lucy.Roth", password: "crxNU0JGQ" }
+        - { name: "Ernest.Espinoza", password: "4IuFaY3yW" }
+        - { name: "Lenard.Woods", password: "Lmv0IaclJ" }
+        - { name: "Leonor.Jarvis", password: "Gy0vTpuSs" }
+        - { name: "Jillian.Gould", password: "zw1fPpLkZ" }
+        - { name: "Bertie.Workman", password: "mY5YYMHXa" }
+        - { name: "Millard.Strong", password: "7yWOY6oNp" }
+        - { name: "Alberto.Conley", password: "uepRlh9Vf" }
+        - { name: "Andrew.Gamble", password: "sAo5HOGNN" }
+        - { name: "Coleen.Parks", password: "rtLpnN0Gb" }
+        - { name: "Amparo.Flowers", password: "Rj9gBSJiH" }
+    
+    - name: Create AD Users - Professors - X Group
+      community.windows.win_domain_user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        path: "OU=Professors,{{ ldapDomain }}"
+        state: present
+        groups_action: add
+        groups:
+          - Remote Desktop Users
+          - X
+      loop:
+        - { name: "Flora.Manning", password: "Ok625gx5B" }
+        - { name: "Lemuel.Cole", password: "VEIYz0nJq" }
+        - { name: "Chris.Odonnell", password: "BgEz4wVD0" }
+        - { name: "Lucy.Fowler", password: "LQ8J5lsTb" }
+        - { name: "Kathie.Baird", password: "X2qLAOjnr" }
+        - { name: "Christoper.Justice", password: "Lm8mrc79M" }
+        - { name: "Reba.Rollins", password: "ilmji0nWK" }
+        - { name: "Christi.Reyes", password: "zNfIm1GDW" }
+        - { name: "Quinn.Mccarty", password: "j4AQD8E7v" }
+        - { name: "Keisha.Brown", password: "krjSz0MNv" }
+        - { name: "Sonny.Delaney", password: "3oXimJdA3" }
+        - { name: "Allie.Ray", password: "QYzRG8tLD" }
+        - { name: "Kathy.Morales", password: "5uKWk2TMj" }
+        - { name: "Deann.Price", password: "yPGpZYYT2" }
+        - { name: "Sydney.Good", password: "NkUX0mdBY" }
+        - { name: "Lizzie.Hodges", password: "6f2sJVXZB" }
+
+    - name: Create AD Users - Vendors - Vendor Group
+      community.windows.win_domain_user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        path: "OU=Vendors,{{ ldapDomain }}"
+        state: present
+        groups_action: add
+        groups:
+          - Remote Desktop Users
+          - Vendors
+      loop:
+        - { name: "Agustin.Walker", password: "XazOAYn6z" }
+        - { name: "Erma.Valentine", password: "uCem6qptq" }
+        - { name: "Brooke.Summers", password: "4MUxr8bzR" }
+        - { name: "Cristina.Owens", password: "sASRkpY4B" }
+        - { name: "Rodney.Rogers", password: "vPoK7cAP6" }
+        - { name: "Mack.Lewis", password: "Q3e7sqIf3" }
+        - { name: "Elvin.Sloan", password: "E6vBWID0E" }
+        - { name: "Rene.Harmon", password: "kIlRywi0v" }
+        - { name: "Stacy.Weeks", password: "JrjNsOR0t" }
+        - { name: "Raquel.Lloyd", password: "2fUWwIGpB" }
+        - { name: "Cornell.Lynn", password: "gxisEjMW3" }
+        - { name: "Mae.Gaines", password: "TnarhN00x" }
+        - { name: "Emil.Watkins", password: "1CSzVnvs3" }
+        - { name: "Roosevelt.Carver", password: "g2lqqhkQT" }
+        - { name: "Hal.Franco", password: "5iFSiZeOD" }
+        - { name: "Beau.Norton", password: "kSxPEF0yj" }
+        - { name: "Shana.Hancock", password: "fIMVg1iMM" }
+        - { name: "Billie.Sharpe", password: "ZpP79nx1W" }
+        - { name: "Jean.Schwartz", password: "YyPJkm4kN" }
+        - { name: "Rochelle.Barry", password: "NCqzzg5M0" }
+        - { name: "Luther.Baker", password: "KDtxV0sWS" }
+        - { name: "Rory.Mayer", password: "pz0taXktm" }
+        - { name: "Vicky.Lee", password: "IrVei9goY" }
+        - { name: "Marty.Waller", password: "4gHTuNTiI" }
+        - { name: "Iris.Salinas", password: "4EHl0udo0" }
+        - { name: "Odis.Vazquez", password: "2f3LmGf6S" }
+        - { name: "Jerry.Wolf", password: "8EghhQJIr" }
+
+    - name: Create AD Users - Agencies - 5Eyes Group
+      community.windows.win_domain_user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        path: "OU=Agencies,{{ ldapDomain }}"
+        state: present
+        groups_action: add
+        groups:
+          - Remote Desktop Users
+          - 5Eyes
+      loop:
+        - { name: "Wilda.Schroeder", password: "wjY8HDOV4" }
+        - { name: "Brain.Oneil", password: "DhyaRKn5C" }
+        - { name: "Melinda.Gordon", password: "ydJOG5yQ2" }
+        - { name: "Raquel.Bullock", password: "oJ3xQmvBJ" }
+
+    - name: Create AD Users - Agencies - USOnly Group
+      community.windows.win_domain_user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        path: "OU=Agencies,{{ ldapDomain }}"
+        state: present
+        groups_action: add
+        groups:
+          - Remote Desktop Users
+          - USOnly
+      loop:
+        - { name: "Kristie.Young", password: "mw1cC2md8" }
+        - { name: "Rowena.Hodge", password: "Bkz1EsWcQ" }
+        - { name: "Eddie.Pittman", password: "O0xw5reIl" }
+        - { name: "Steven.Peck", password: "7yppK0uDg" }
+        - { name: "Terri.Donaldson", password: "r0LrYfz2A" }
+        - { name: "Fletcher.Cummings", password: "QzkC7YPqr" }
+        - { name: "Marlon.Boone", password: "ZfteL0lWd" }
+    
+    - name: Create AD Users - Domain Admins 
+      community.windows.win_domain_user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        state: present
+        groups_action: add
+        groups:
+          - Remote Desktop Users
+          - Domain Admins
+      loop:
+        - { name: "Bradly.Marks", password: "vsD0qaLZd" }
+        - { name: "Deann.Blackburn", password: "eKBo04Jga" }
+        - { name: "Barbara.Madden", password: "5bl9oJZNe" }
+        - { name: "Orval.Anderson", password: "i8wZgRdnP" }
+
+    - name: Create AD Users  
+      community.windows.win_domain_user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        state: present
+        groups_action: add
+        groups:
+          - Remote Desktop Users
+      loop:
+        - { name: "Frankie.Morales", password: "Uly0WoZwA" }
+        - { name: "Freida.Roberts", password: "6mbE8eeQU" }
+        - { name: "Gerardo.Roberts", password: "vJE0dhYQl" }
+        - { name: "Lynnette.Albert", password: "224Ww2ZoS" }
+        - { name: "Nell.Mejia", password: "Rym683srR" }
+        - { name: "Adam.Garner", password: "mNuRC8HM1" }
+        - { name: "Marie.Aguilar", password: "ju8VsEXYy" }
+        - { name: "Mia.Stanley", password: "GEw79pmWZ" }
+        - { name: "Melvin.Faulkner", password: "Mfv2GO6to" }
+        - { name: "Bradly.Christian", password: "60QkehFH0" }
+        - { name: "Arnold.Sharp", password: "607qGs2UG" }
+        - { name: "Pam.Lindsay", password: "fTbFmVdR7" }
+        - { name: "Omar.Diaz", password: "G75CAycs5" }
+        - { name: "Pablo.Buck", password: "pDgIMv0ao" }
+        - { name: "Shawn.Calhoun", password: "NzA0BBeWT" }
+        - { name: "Annette.Hayden", password: "3sFshRhGd" }
+

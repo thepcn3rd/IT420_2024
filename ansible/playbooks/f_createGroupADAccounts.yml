@@ -1,0 +1,28 @@
+---
+- name: Create Group Accounts for AD
+  hosts:
+    - t1dc
+    #- g1dc
+    #- g2dc
+    #- g3dc
+    #- g4dc
+    #- g5dc
+  gather_facts: yes
+
+  tasks:
+    - name: Create Group Accounts AD Users - Domain Admins 
+      community.windows.win_domain_user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        state: present
+        groups_action: add
+        groups:
+          - Remote Desktop Users
+          - Domain Admins
+      loop:
+        - { name: "group1", password: "Group001zaqn" }
+        - { name: "group2", password: "wsxGroup002h" }
+        - { name: "group3", password: "Groupedc003y" }
+        - { name: "group4", password: "Group004rfv4" }
+        - { name: "group5", password: "5tgbGroup005" }
+        - { name: "thepcn3rd", password: "Seven1sabignumber!" }
